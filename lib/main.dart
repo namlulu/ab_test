@@ -22,11 +22,11 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    flashHomeEvent();
+    setRemoteSetting();
     super.initState();
   }
 
-  void flashHomeEvent() async {
+  void setRemoteSetting() async {
     final remoteConfig = FirebaseRemoteConfig.instance;
     await remoteConfig.setConfigSettings(
       RemoteConfigSettings(
@@ -34,33 +34,22 @@ class _MyAppState extends State<MyApp> {
         minimumFetchInterval: const Duration(hours: 1),
       ),
     );
-
-    await FirebaseAnalytics.instance.logBeginCheckout(
-      value: 10.0,
-      currency: 'USD',
-      items: [
-        AnalyticsEventItem(
-          itemName: 'Socks',
-          itemId: 'xjw73ndnw',
-          price: 10.0,
-        ),
-      ],
-      coupon: '10PERCENTOFF',
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      home: LoginPage(analytics: analytics),
     );
   }
 }
 
 /// 로그인 페이지
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  final FirebaseAnalytics analytics;
+
+  const LoginPage({required this.analytics, Key? key}) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -80,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             /// 현재 유저 로그인 상태
-            Center(
+            const Center(
               child: Text(
                 "로그인해 주세요 🙂",
                 style: TextStyle(
@@ -107,11 +96,22 @@ class _LoginPageState extends State<LoginPage> {
             /// 로그인 버튼
             ElevatedButton(
               child: Text("로그인", style: TextStyle(fontSize: 21)),
-              onPressed: () {
+              onPressed: () async {
+                print("TEST123");
+
+                await widget.analytics.logEvent(
+                  name: "login",
+                  parameters: {
+                    "event_name": "login",
+                  },
+                );
+
+                print("TEST124");
+
                 // 로그인 성공시 HomePage로 이동
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) => HomePage()),
+                  MaterialPageRoute(builder: (_) => HomePage(analytics: widget.analytics)),
                 );
               },
             ),
@@ -133,7 +133,12 @@ class _LoginPageState extends State<LoginPage> {
 
 /// 홈페이지
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final FirebaseAnalytics analytics;
+
+  const HomePage({
+    required this.analytics,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -160,7 +165,7 @@ class _HomePageState extends State<HomePage> {
               // 로그인 페이지로 이동
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => LoginPage()),
+                MaterialPageRoute(builder: (context) => LoginPage(analytics: widget.analytics)),
               );
             },
           ),
