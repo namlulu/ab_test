@@ -2,6 +2,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
@@ -62,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("로그인")),
+      appBar: AppBar(title: const Text("로그인")),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -77,51 +78,56 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
 
             /// 이메일
             TextField(
               controller: emailController,
-              decoration: InputDecoration(hintText: "이메일"),
+              decoration: const InputDecoration(hintText: "이메일"),
             ),
 
             /// 비밀번호
             TextField(
               controller: passwordController,
               obscureText: false, // 비밀번호 안보이게
-              decoration: InputDecoration(hintText: "비밀번호"),
+              decoration: const InputDecoration(hintText: "비밀번호"),
             ),
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
 
             /// 로그인 버튼
             ElevatedButton(
-              child: Text("로그인", style: TextStyle(fontSize: 21)),
+              child: const Text(
+                "로그인",
+                style: TextStyle(fontSize: 21),
+              ),
               onPressed: () async {
-                print("TEST123");
-
                 await widget.analytics.logEvent(
                   name: "login",
                   parameters: {
-                    "event_name": "login",
+                    "email": emailController.text,
                   },
                 );
-
-                print("TEST124");
 
                 // 로그인 성공시 HomePage로 이동
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) => HomePage(analytics: widget.analytics)),
+                  MaterialPageRoute(
+                      builder: (_) => HomePage(analytics: widget.analytics)),
                 );
               },
             ),
 
             /// 회원가입 버튼
             ElevatedButton(
-              child: Text("회원가입", style: TextStyle(fontSize: 21)),
+              child: const Text(
+                "회원가입",
+                style: TextStyle(fontSize: 21),
+              ),
               onPressed: () {
                 // 회원가입
-                print("sign up");
+                if (kDebugMode) {
+                  print("sign up");
+                }
               },
             ),
           ],
@@ -151,21 +157,25 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("버킷 리스트"),
+        title: const Text("버킷 리스트"),
         actions: [
           TextButton(
-            child: Text(
+            child: const Text(
               "로그아웃",
               style: TextStyle(
                 color: Colors.white,
               ),
             ),
             onPressed: () {
-              print("sign out");
+              if (kDebugMode) {
+                print("sign out");
+              }
               // 로그인 페이지로 이동
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => LoginPage(analytics: widget.analytics)),
+                MaterialPageRoute(
+                  builder: (context) => LoginPage(analytics: widget.analytics),
+                ),
               );
             },
           ),
@@ -182,7 +192,7 @@ class _HomePageState extends State<HomePage> {
                 Expanded(
                   child: TextField(
                     controller: jobController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: "하고 싶은 일을 입력해주세요.",
                     ),
                   ),
@@ -190,18 +200,20 @@ class _HomePageState extends State<HomePage> {
 
                 /// 추가 버튼
                 ElevatedButton(
-                  child: Icon(Icons.add),
+                  child: const Icon(Icons.add),
                   onPressed: () {
                     // create bucket
                     if (jobController.text.isNotEmpty) {
-                      print("create bucket");
+                      if (kDebugMode) {
+                        print("create bucket");
+                      }
                     }
                   },
                 ),
               ],
             ),
           ),
-          Divider(height: 1),
+          const Divider(height: 1),
 
           /// 버킷 리스트
           Expanded(
@@ -223,7 +235,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   // 삭제 아이콘 버튼
                   trailing: IconButton(
-                    icon: Icon(CupertinoIcons.delete),
+                    icon: const Icon(CupertinoIcons.delete),
                     onPressed: () {
                       // 삭제 버튼 클릭시
                     },
