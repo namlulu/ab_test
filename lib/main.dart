@@ -20,6 +20,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
 
   @override
   void initState() {
@@ -28,7 +29,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   void setRemoteSetting() async {
-    final remoteConfig = FirebaseRemoteConfig.instance;
     await remoteConfig.setConfigSettings(
       RemoteConfigSettings(
         fetchTimeout: const Duration(minutes: 1),
@@ -44,7 +44,10 @@ class _MyAppState extends State<MyApp> {
       navigatorObservers: [
         FirebaseAnalyticsObserver(analytics: analytics),
       ],
-      home: LoginPage(analytics: analytics),
+      home: LoginPage(
+        analytics: analytics,
+        remoteConfig: remoteConfig,
+      ),
     );
   }
 }
@@ -52,8 +55,13 @@ class _MyAppState extends State<MyApp> {
 /// 로그인 페이지
 class LoginPage extends StatefulWidget {
   final FirebaseAnalytics analytics;
+  final FirebaseRemoteConfig remoteConfig;
 
-  const LoginPage({required this.analytics, Key? key}) : super(key: key);
+  const LoginPage({
+    required this.analytics,
+    required this.remoteConfig,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -111,11 +119,21 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 );
 
+                await widget.remoteConfig.fetchAndActivate();
+                if (kDebugMode) {
+                  print(widget.remoteConfig.getAll());
+                  print(widget.remoteConfig.getString('TEST_TEXT'));
+                }
+
                 // 로그인 성공시 HomePage로 이동
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => HomePage(analytics: widget.analytics)),
+                    builder: (_) => HomePage(
+                      analytics: widget.analytics,
+                      remoteConfig: widget.remoteConfig,
+                    ),
+                  ),
                 );
               },
             ),
@@ -143,9 +161,11 @@ class _LoginPageState extends State<LoginPage> {
 /// 홈페이지
 class HomePage extends StatefulWidget {
   final FirebaseAnalytics analytics;
+  final FirebaseRemoteConfig remoteConfig;
 
   const HomePage({
     required this.analytics,
+    required this.remoteConfig,
     Key? key,
   }) : super(key: key);
 
@@ -177,7 +197,10 @@ class _HomePageState extends State<HomePage> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => LoginPage(analytics: widget.analytics),
+                  builder: (context) => LoginPage(
+                    analytics: widget.analytics,
+                    remoteConfig: widget.remoteConfig,
+                  ),
                 ),
               );
             },
