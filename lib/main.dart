@@ -1,12 +1,14 @@
-import 'package:ab_test/views/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:provider/provider.dart';
 
-import 'package:ab_test/services/auth_service.dart';
-import 'package:ab_test/views/login_page.dart';
+import 'model/bucket_model.dart';
+import 'services/auth_service.dart';
+import '/views/login_page.dart';
+import 'views/home_page.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // main 함수에서 async 사용하기 위함
@@ -15,6 +17,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AuthService()),
+        ChangeNotifierProvider(create: (context) => BucketModel()),
       ],
       child: const MyApp(),
     ),
