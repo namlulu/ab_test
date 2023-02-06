@@ -1,6 +1,5 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -95,8 +94,19 @@ class _LoginPageState extends State<LoginPage> {
                       onSuccess: () {
                         // 로그인 성공
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
+                          const SnackBar(
                             content: Text("로그인 성공"),
+                          ),
+                        );
+
+                        // 로그인 성공시 HomePage로 이동
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => HomePage(
+                                analytics: widget.analytics,
+                                remoteConfig: widget.remoteConfig,
+                                direction: direction),
                           ),
                         );
                       },
@@ -108,17 +118,6 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         );
                       },
-                    );
-
-                    // 로그인 성공시 HomePage로 이동
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => HomePage(
-                            analytics: widget.analytics,
-                            remoteConfig: widget.remoteConfig,
-                            direction: direction),
-                      ),
                     );
                   },
                 ),
