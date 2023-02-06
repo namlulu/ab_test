@@ -1,8 +1,10 @@
+import 'package:ab_test/services/auth_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'login_page.dart';
 
@@ -40,9 +42,8 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             onPressed: () {
-              if (kDebugMode) {
-                print("sign out");
-              }
+              context.read<AuthService>().signOut();
+
               // 로그인 페이지로 이동
               Navigator.pushReplacement(
                 context,

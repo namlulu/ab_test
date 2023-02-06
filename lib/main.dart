@@ -1,3 +1,4 @@
+import 'package:ab_test/views/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -44,22 +45,33 @@ class _MyAppState extends State<MyApp> {
         minimumFetchInterval: const Duration(hours: 1),
       ),
     );
+
+    await remoteConfig.setDefaults(
+      const {
+        "TEST_TEXT": "LEFT",
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final user = context.read<AuthService>().currentUser();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       navigatorObservers: [
         FirebaseAnalyticsObserver(analytics: analytics),
       ],
-      home: LoginPage(
-        analytics: analytics,
-        remoteConfig: remoteConfig,
-      ),
+      home: user == null
+          ? LoginPage(
+              analytics: analytics,
+              remoteConfig: remoteConfig,
+            )
+          : HomePage(
+              analytics: analytics,
+              remoteConfig: remoteConfig,
+              direction: remoteConfig.getString('TEST_TEXT'),
+            ),
     );
   }
 }
-
-
-

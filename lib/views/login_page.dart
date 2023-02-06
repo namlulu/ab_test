@@ -30,6 +30,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Consumer<AuthService>(
       builder: (context, authService, child) {
+        final user = authService.currentUser();
+
         return Scaffold(
           appBar: AppBar(
             title: const Text("로그인"),
@@ -40,10 +42,10 @@ class _LoginPageState extends State<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 /// 현재 유저 로그인 상태
-                const Center(
+                Center(
                   child: Text(
-                    "로그인해 주세요 🙂",
-                    style: TextStyle(
+                    user == null ? "로그인해 주세요 🙂" : "${user.email}님 안녕하세요 👋",
+                    style: const TextStyle(
                       fontSize: 24,
                     ),
                   ),
@@ -82,11 +84,6 @@ class _LoginPageState extends State<LoginPage> {
                     String direction =
                         widget.remoteConfig.getString('TEST_TEXT');
 
-                    if (kDebugMode) {
-                      print(widget.remoteConfig.getAll());
-                      print(direction);
-                    }
-
                     // 로그인
                     authService.signIn(
                       email: emailController.text,
@@ -104,9 +101,10 @@ class _LoginPageState extends State<LoginPage> {
                           context,
                           MaterialPageRoute(
                             builder: (_) => HomePage(
-                                analytics: widget.analytics,
-                                remoteConfig: widget.remoteConfig,
-                                direction: direction),
+                              analytics: widget.analytics,
+                              remoteConfig: widget.remoteConfig,
+                              direction: direction,
+                            ),
                           ),
                         );
                       },
@@ -135,9 +133,11 @@ class _LoginPageState extends State<LoginPage> {
                       password: passwordController.text,
                       onSuccess: () {
                         // 회원가입 성공
-                        if (kDebugMode) {
-                          print("회원가입 성공");
-                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("회원가입 성공"),
+                          ),
+                        );
                       },
                       onError: (err) {
                         // 에러 발생
