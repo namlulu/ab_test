@@ -1,16 +1,16 @@
 # ab_test
 
-A new Flutter project.
+- Firebase의 A/B 테스트 실습 코드입니다.
+- Remote Config 방식을 황용했습니다.
 
-## Getting Started
+## 가설
 
-This project is a starting point for a Flutter application.
+- 투두 리스트 입력 값의 글자가 왼쪽/오른쪽 중 어디가 더욱 매력적으로 보일까?
 
-A few resources to get you started if this is your first Flutter project:
+## 집단
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- 이 앱을 사용하는 유저 100% 대상으로 50%는 왼쪽 50%는 오른쪽으로 글자가 보임
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 결론
+
+- 결과는 지속적으로 수집하고 있으며, 앱 재방문율을 비교하여 결론을 도출할 수 있음
